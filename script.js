@@ -18,6 +18,7 @@ async function ToDos(){
     }).join('');
 
     tasks.innerHTML+=result;
+    tasksNumber();
 
     // let deleteButton=document.querySelector(".delete");
     // console.log(deleteButton);
@@ -43,6 +44,7 @@ addTaskBtn.onclick= async (event)=>{
             </tr>`;
         tasks.innerHTML+=newTask;
         taskText.value="";
+        tasksNumber();
         // await fetch("https://dummyjson.com/todos", {
         //     method: 'POST',
         //     body: {
@@ -72,6 +74,7 @@ tasks.onclick=event=>{
     if (element.classList.contains('delete')){
         numberOfTasks--;
         element.parentElement.parentElement.remove();
+        tasksNumber();
     }
     
     if( element.classList.contains('done'))
@@ -82,5 +85,8 @@ tasks.onclick=event=>{
         children[3].textContent='completed';
         tasktodo.classList.add('Done');
     }
-
+}
+function tasksNumber(){
+    let tasksno=document.querySelector('footer span');
+    tasksno.textContent=numberOfTasks;
 }
