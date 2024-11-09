@@ -95,6 +95,7 @@ tr{
 footer{
     margin: 50px 0px;
     text-align: center;
+    font-family:var(--headerFont),'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 .Done{
