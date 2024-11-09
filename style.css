@@ -96,3 +96,8 @@ footer{
     margin: 50px 0px;
     text-align: center;
 }
+
+.Done{
+    
+    text-decoration: line-through;
+}
