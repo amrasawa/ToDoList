@@ -5,12 +5,12 @@ async function ToDos(){
     //console.log(data.todos);
     let result =data.todos.map((task)=>{
         return `
-            <tr>
+            <tr class="row">
                 <td>${task.id}</td>
                 <td>${task.todo}</td>
                 <td>${task.userId}</td>
                 <td>${(task.completed)? "completed": "Pending"}
-                <td> <button class="delete button">Delete</button><button class="Done button">Done</button></td>
+                <td class="actions"> <button class="delete button">Delete</button><button class="Done button">Done</button></td>
             </tr>`
     }).join('');
     tasks.innerHTML+=result;
