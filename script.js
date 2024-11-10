@@ -1,37 +1,46 @@
 let tasks=document.querySelector(".tasks");
 let numberOfTasks=0;
+let autono=0;
 
 async function ToDos(){
-    let response =await fetch("https://dummyjson.com/todos");
-    let data=await response.json();
-    //console.log(data.todos);
-    let result =data.todos.map((task)=>{
-        numberOfTasks++;
-        return `
-            <tr class="row">
-                <td>${task.id}</td>
-                <td class="task-todo">${task.todo}</td>
-                <td>${task.userId}</td>
-                <td class="status">${(task.completed)? "completed": "Pending"}
-                <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button></td>
-            </tr>`
-    }).join('');
-
-    tasks.innerHTML+=result;
-    tasksNumber();
-
+    localStorage.clear();
+    if (localStorage.getItem("data"))
+        history();
+    else
+    {
+        numberOfTasks=0;
+        let response =await fetch("https://dummyjson.com/todos");
+        let data=await response.json();
+        //console.log(data.todos);
+        let result =data.todos.map((task)=>{
+            numberOfTasks++;
+            return `
+                <tr class="row">
+                    <td>${task.id}</td>
+                    <td class="task-todo">${task.todo}</td>
+                    <td>${task.userId}</td>
+                    <td class="status">${(task.completed)? "completed": "Pending"}
+                    <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button></td>
+                </tr>`
+        }).join('');
+        autono=data.todos.lenght;
+        tasks.innerHTML+=result;
+        autosave();
+        tasksNumber();
+    }
     // let deleteButton=document.querySelector(".delete");
     // console.log(deleteButton);
     // deleteButton.addEventListener('click',async ()=>{
     //     deleteButton.parentElement.parentElement.remove();
-    // })
+    // }) 
+    
 
 }
 
 let addTaskBtn=document.querySelector(".add-task .button");
 let taskText= document.querySelector(".add-task .task");
-
 ToDos();
+
 
 addTaskBtn.onclick= async (event)=>{
     if (taskText.value==="") alert("You should first add task");
@@ -46,7 +55,9 @@ addTaskBtn.onclick= async (event)=>{
             </tr>`;
         tasks.innerHTML+=newTask;
         taskText.value="";
+        autosave();
         tasksNumber();
+        
         // await fetch("https://dummyjson.com/todos", {
         //     method: 'POST',
         //     body: {
@@ -76,7 +87,9 @@ tasks.onclick=event=>{
     if (element.classList.contains('delete')){
         numberOfTasks--;
         element.parentElement.parentElement.remove();
-        tasksNumber();
+         autosave();
+         tasksNumber();
+       
     }
     
     if( element.classList.contains('done'))
@@ -86,12 +99,13 @@ tasks.onclick=event=>{
         let tasktodo=children[1];
         children[3].textContent='completed';
         tasktodo.classList.add('Done');
+        autosave();
     }
 }
 
 function tasksNumber(){
     let tasksno=document.querySelector('footer span');
-    tasksno.textContent=numberOfTasks;
+    tasksno.textContent=localStorage.getItem('no');
 }
 
 search.oninput= async event=>{
@@ -115,3 +129,13 @@ search.oninput= async event=>{
     tasks.innerHTML=similar;
 }
 
+function autosave(){
+    localStorage.setItem("data", tasks.innerHTML);
+    localStorage.setItem("no", numberOfTasks);
+}
+
+function history(){
+    let content=localStorage.getItem('data');
+    tasks.innerHTML=content;
+    tasksNumber();
+}
