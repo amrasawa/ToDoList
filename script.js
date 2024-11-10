@@ -30,7 +30,9 @@ async function ToDos(){
 
 let addTaskBtn=document.querySelector(".add-task .button");
 let taskText= document.querySelector(".add-task .task");
+
 ToDos();
+
 addTaskBtn.onclick= async (event)=>{
     if (taskText.value==="") alert("You should first add task");
     else {
@@ -86,7 +88,30 @@ tasks.onclick=event=>{
         tasktodo.classList.add('Done');
     }
 }
+
 function tasksNumber(){
     let tasksno=document.querySelector('footer span');
     tasksno.textContent=numberOfTasks;
 }
+
+search.oninput= async event=>{
+    let task= search.value;
+    //console.log(task);
+    let response =await fetch("https://dummyjson.com/todos");
+    let data=await response.json();
+    
+    let result=data.todos.filter(element=>element.todo.includes(task))
+    console.log(result);
+    let similar=result.map(element=>{
+        return `
+            <tr class="row">
+                <td>${element.id}</td>
+                <td class="task-todo">${element.todo}</td>
+                <td>${element.userId}</td>
+                <td class="status">${(element.completed)? "completed": "Pending"}
+                <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button></td>
+            </tr>`
+    }).join('');
+    tasks.innerHTML=similar;
+}
+
