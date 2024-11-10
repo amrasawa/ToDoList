@@ -3,7 +3,7 @@ let numberOfTasks=0;
 let autono=0;
 
 async function ToDos(){
-    localStorage.clear();
+    //localStorage.clear();
     if (localStorage.getItem("data"))
         history();
     else
