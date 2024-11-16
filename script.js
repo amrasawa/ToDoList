@@ -1,11 +1,14 @@
 let tasks=document.querySelector(".tasks");
-let numberOfTasks=0;
-let autono=0;
+let numberOfTasks;
 
 async function ToDos(){
     //localStorage.clear();
     if (localStorage.getItem("data"))
+    {
+        console.log(numberOfTasks);
+        numberOfTasks=localStorage.getItem("no");
         history();
+    }
     else
     {
         numberOfTasks=0;
@@ -23,7 +26,7 @@ async function ToDos(){
                     <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button></td>
                 </tr>`
         }).join('');
-        autono=data.todos.lenght;
+        console.log(numberOfTasks);
         tasks.innerHTML+=result;
         autosave();
         tasksNumber();
@@ -50,7 +53,6 @@ addTaskBtn.onclick= async (event)=>{
         taskText.value="";
         autosave();
         tasksNumber();
-        
     }
 }
 
@@ -82,35 +84,35 @@ function tasksNumber(){
 search.oninput= async event=>{
     let task= search.value;
     if(task!="" ){
-    console.log(tasks);
-    let response =tasks.children;
-    console.log(response);
-    let output=[];
-    for (let i=0;i<response.length;++i){
-        let fields=response[i].children;
-        console.log(fields);
-        if(fields[1].textContent.includes(task))
-            output.push(fields);
+        console.log(tasks);
+        let response =tasks.children;
+        console.log(response);
+        let output=[];
+        for (let i=0;i<response.length;++i){
+            let fields=response[i].children;
+            console.log(fields);
+            if(fields[1].textContent.includes(task))
+                output.push(fields);
+        }
+        console.log(output);
+        let result=output.map(task=>{
+            console.log(task)
+            return `
+                <tr class="row">
+                        <td>${task[0].textContent}</td>
+                        <td class="task-todo">${task[1].textContent}</td>
+                        <td>${task[2].textContent}</td>
+                        <td class="status">${task[3].textContent}
+                        <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button></td>
+                </tr>
+            
+            `
+        }).join("");
+        console.log(result);
+        tasks.innerHTML=result;
     }
-    console.log(output);
-    let result=output.map(task=>{
-        console.log(task)
-        return `
-            <tr class="row">
-                    <td>${task[0].textContent}</td>
-                    <td class="task-todo">${task[1].textContent}</td>
-                    <td>${task[2].textContent}</td>
-                    <td class="status">${task[3].textContent}
-                    <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button></td>
-            </tr>
-        
-        `
-    }).join("");
-    console.log(result);
-    tasks.innerHTML=result;
-}
-else 
-ToDos();
+    else 
+        ToDos();
 }
 
 function autosave(){
