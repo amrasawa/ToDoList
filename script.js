@@ -28,13 +28,6 @@ async function ToDos(){
         autosave();
         tasksNumber();
     }
-    // let deleteButton=document.querySelector(".delete");
-    // console.log(deleteButton);
-    // deleteButton.addEventListener('click',async ()=>{
-    //     deleteButton.parentElement.parentElement.remove();
-    // }) 
-    
-
 }
 
 let addTaskBtn=document.querySelector(".add-task .button");
@@ -58,38 +51,16 @@ addTaskBtn.onclick= async (event)=>{
         autosave();
         tasksNumber();
         
-        // await fetch("https://dummyjson.com/todos", {
-        //     method: 'POST',
-        //     body: {
-        //             "id": 2,
-        //             "todo": "Memorize a poem",
-        //             "completed": true,
-        //             "userId": 13
-        //         }
-        // }).then(res=> console.log(res)).catch(err=> console.error(err));
     }
 }
 
 tasks.onclick=event=>{
-    // let deleteButton=document.querySelector(".delete");
-    // let doneButton=document.querySelector(".done"); 
-    
-    // if(event.target===deleteButton)
-    //     deleteButton.parentElement.parentElement.remove();
-    // else if(event.target===doneButton)
-    //     {
-    //         let taskStatus=document.querySelector(".status")
-    //         let taskToDo=document.querySelector(".task-todo");
-    //         taskToDo.classList.add="Done";
-    //         taskStatus.textContent='completed';
-    //     }
     let element=event.target;
     if (element.classList.contains('delete')){
         numberOfTasks--;
         element.parentElement.parentElement.remove();
-         autosave();
-         tasksNumber();
-       
+        autosave();
+        tasksNumber();
     }
     
     if( element.classList.contains('done'))
@@ -110,23 +81,36 @@ function tasksNumber(){
 
 search.oninput= async event=>{
     let task= search.value;
-    //console.log(task);
-    let response =await fetch("https://dummyjson.com/todos");
-    let data=await response.json();
-    
-    let result=data.todos.filter(element=>element.todo.includes(task))
-    console.log(result);
-    let similar=result.map(element=>{
+    if(task!="" ){
+    console.log(tasks);
+    let response =tasks.children;
+    console.log(response);
+    let output=[];
+    for (let i=0;i<response.length;++i){
+        let fields=response[i].children;
+        console.log(fields);
+        if(fields[1].textContent.includes(task))
+            output.push(fields);
+    }
+    console.log(output);
+    let result=output.map(task=>{
+        console.log(task)
         return `
             <tr class="row">
-                <td>${element.id}</td>
-                <td class="task-todo">${element.todo}</td>
-                <td>${element.userId}</td>
-                <td class="status">${(element.completed)? "completed": "Pending"}
-                <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button></td>
-            </tr>`
-    }).join('');
-    tasks.innerHTML=similar;
+                    <td>${task[0].textContent}</td>
+                    <td class="task-todo">${task[1].textContent}</td>
+                    <td>${task[2].textContent}</td>
+                    <td class="status">${task[3].textContent}
+                    <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button></td>
+            </tr>
+        
+        `
+    }).join("");
+    console.log(result);
+    tasks.innerHTML=result;
+}
+else 
+ToDos();
 }
 
 function autosave(){
