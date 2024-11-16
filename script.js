@@ -1,12 +1,13 @@
 let tasks=document.querySelector(".tasks");
 let numberOfTasks;
+let taskid;
 
 async function ToDos(){
     //localStorage.clear();
     if (localStorage.getItem("data"))
     {
-        console.log(numberOfTasks);
         numberOfTasks=localStorage.getItem("no");
+        taskid=localStorage.getItem("id");
         history();
     }
     else
@@ -26,7 +27,7 @@ async function ToDos(){
                     <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button></td>
                 </tr>`
         }).join('');
-        console.log(numberOfTasks);
+        taskid=numberOfTasks;
         tasks.innerHTML+=result;
         autosave();
         tasksNumber();
@@ -41,15 +42,17 @@ ToDos();
 addTaskBtn.onclick= async (event)=>{
     if (taskText.value==="") alert("You should first add task");
     else {
+        taskid++;
         let newTask= `
             <tr class="row">
-                <td>${++numberOfTasks}</td>
+                <td>${taskid}</td>
                 <td class="task-todo">${taskText.value}</td>
                 <td>23</td>
                 <td class="status">Pending</td>
                 <td class="actions"> <button class="delete button">Delete</button> <button class="done button">Done</button></td>
             </tr>`;
         tasks.innerHTML+=newTask;
+        ++numberOfTasks;
         taskText.value="";
         autosave();
         tasksNumber();
@@ -113,11 +116,13 @@ search.oninput= async event=>{
     }
     else 
         ToDos();
-}
+
+    }
 
 function autosave(){
     localStorage.setItem("data", tasks.innerHTML);
     localStorage.setItem("no", numberOfTasks);
+    localStorage.setItem('id',taskid);
 }
 
 function history(){
