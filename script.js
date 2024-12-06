@@ -1,13 +1,14 @@
 let tasks = document.querySelector(".tasks");
 let numberOfTasks;
-let taskid;
+let taskId;
 
-async function ToDos() {
+async function addToDos() {
   //localStorage.clear();
   if (localStorage.getItem("data")) {
+    console.log(localStorage.getItem("data"));
     numberOfTasks = localStorage.getItem("no");
-    taskid = localStorage.getItem("id");
-    history();
+    taskId = localStorage.getItem("id");
+    loadHistory();
   } else {
     numberOfTasks = 0;
     let response = await fetch("https://dummyjson.com/todos");
@@ -16,6 +17,7 @@ async function ToDos() {
     let result = data.todos
       .map((task) => {
         numberOfTasks++;
+        autosave(task);
         return `
                 <tr class="row">
                     <td>${task.id}</td>
@@ -28,36 +30,58 @@ async function ToDos() {
                 </tr>`;
       })
       .join("");
-    taskid = numberOfTasks;
+    taskId = numberOfTasks;
+    localStorage.setItem("id", taskId);
     tasks.innerHTML += result;
-    autosave();
     tasksNumber();
   }
 }
 
 let addTaskBtn = document.querySelector(".add-task .button");
 let taskText = document.querySelector(".add-task .task");
-ToDos();
+addToDos();
 
 addTaskBtn.onclick = async (event) => {
   if (taskText.value === "") alert("You should first add task");
   else {
-    taskid++;
-    let newTask = `
-            <tr class="row">
-                <td>${taskid}</td>
-                <td class="task-todo">${taskText.value}</td>
-                <td>23</td>
-                <td class="status">Pending</td>
-                <td class="actions"> <button class="delete button">Delete</button> <button class="done button">Done</button></td>
-            </tr>`;
-    tasks.innerHTML += newTask;
+    taskId++;
+    let task = {
+      id: taskId,
+      todo: `${taskText.value}`,
+      completed: false,
+      userId: 23,
+    };
+    addTask(task);
+    // let newTask = `
+    //         <tr class="row">
+    //             <td>${taskId}</td>
+    //             <td class="task-todo">${taskText.value}</td>
+    //             <td>23</td>
+    //             <td class="status">Pending</td>
+    //             <td class="actions"> <button class="delete button">Delete</button> <button class="done button">Done</button></td>
+    //         </tr>`;
+    // tasks.innerHTML += newTask;
+
     ++numberOfTasks;
     taskText.value = "";
-    autosave();
+    autosave(task);
     tasksNumber();
   }
 };
+
+function addTask(task) {
+  let newTask = `
+            <tr class="row">
+                <td>${task.id}</td>
+                <td class="task-todo">${task.todo}</td>
+                <td>23</td>
+                <td class="status">${
+                  task.completed ? "completed" : "Pending"
+                }</td>
+                <td class="actions"> <button class="delete button">Delete</button> <button class="done button">Done</button></td>
+            </tr>`;
+  tasks.innerHTML += newTask;
+}
 
 tasks.onclick = (event) => {
   let element = event.target;
@@ -101,13 +125,12 @@ search.oninput = async (event) => {
         console.log(task);
         return `
                 <tr class="row">
-                        <td>${task[0].textContent}</td>
-                        <td class="task-todo">${task[1].textContent}</td>
-                        <td>${task[2].textContent}</td>
-                        <td class="status">${task[3].textContent}
-                        <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button></td>
+                  <td>${task[0].textContent}</td>
+                  <td class="task-todo">${task[1].textContent}</td>
+                  <td>${task[2].textContent}</td>
+                  <td class="status">${task[3].textContent}
+                  <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button></td>
                 </tr>
-            
             `;
       })
       .join("");
@@ -116,14 +139,31 @@ search.oninput = async (event) => {
   } else ToDos();
 };
 
-function autosave() {
-  localStorage.setItem("data", tasks.innerHTML);
+function autosave(task) {
+  let data = JSON.parse(localStorage.getItem("data") || "[]");
+  data.push(task);
+  localStorage.setItem("data", JSON.stringify(data));
   localStorage.setItem("no", numberOfTasks);
-  localStorage.setItem("id", taskid);
+  localStorage.setItem("id", taskId);
 }
 
-function history() {
-  let content = localStorage.getItem("data");
-  tasks.innerHTML = content;
+function loadHistory() {
+  let data = JSON.parse(localStorage.getItem("data"), "[]");
+  console.log(data);
+  let response = data
+    .map((ele) => {
+      return `
+      <tr class="row">
+        <td>${ele.id}</td>
+        <td class="task-todo">${ele.todo}</td>
+        <td>23</td>
+        <td class="status">${ele.completed ? "completed" : "Pending"}</td>
+        <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button></td>
+      </tr>
+    `;
+    })
+    .join("");
+
+  tasks.innerHTML = response;
   tasksNumber();
 }
