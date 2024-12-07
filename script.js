@@ -14,9 +14,9 @@ async function addToDos() {
     let response = await fetch("https://dummyjson.com/todos");
     let data = await response.json();
     //console.log(data.todos);
+    numberOfTasks=data.length;
     let result = data.todos
       .map((task) => {
-        numberOfTasks++;
         autosave(task);
         return `
                 <tr class="row">
@@ -26,7 +26,7 @@ async function addToDos() {
                     <td class="status">${
                       task.completed ? "completed" : "Pending"
                     }
-                    <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button></td>
+                    <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button><button id="undoBtn" class="button">Undo</button> </td>
                 </tr>`;
       })
       .join("");
@@ -52,16 +52,6 @@ addTaskBtn.onclick = async (event) => {
       userId: 23,
     };
     addTask(task);
-    // let newTask = `
-    //         <tr class="row">
-    //             <td>${taskId}</td>
-    //             <td class="task-todo">${taskText.value}</td>
-    //             <td>23</td>
-    //             <td class="status">Pending</td>
-    //             <td class="actions"> <button class="delete button">Delete</button> <button class="done button">Done</button></td>
-    //         </tr>`;
-    // tasks.innerHTML += newTask;
-
     ++numberOfTasks;
     taskText.value = "";
     autosave(task);
@@ -87,7 +77,6 @@ tasks.onclick = (event) => {
   if (element.classList.contains("delete")) {
     numberOfTasks--;
     element.parentElement.parentElement.remove();
-    //autosave();
     tasksNumber();
   }
 
@@ -162,7 +151,6 @@ function loadHistory() {
     `;
     })
     .join("");
-
   tasks.innerHTML = response;
   tasksNumber();
 }
