@@ -76,8 +76,7 @@ function addTask(task) {
                 <td class="task-todo">${task.todo}</td>
                 <td>23</td>
                 <td class="status">${
-                  task.completed ? "completed" : "Pending"
-                }</td>
+                  task.completed ? "completed" : "Pending"}</td>
                 <td class="actions"> <button class="delete button">Delete</button> <button class="done button">Done</button></td>
             </tr>`;
   tasks.innerHTML += newTask;
@@ -88,7 +87,7 @@ tasks.onclick = (event) => {
   if (element.classList.contains("delete")) {
     numberOfTasks--;
     element.parentElement.parentElement.remove();
-    autosave();
+    //autosave();
     tasksNumber();
   }
 
