@@ -3,7 +3,7 @@ let numberOfTasks;
 let taskId;
 
 async function addToDos() {
-  //localStorage.clear();
+  localStorage.clear();
   if (localStorage.getItem("data")) {
     console.log(localStorage.getItem("data"));
     numberOfTasks = localStorage.getItem("no");
@@ -26,7 +26,7 @@ async function addToDos() {
                     <td class="status">${
                       task.completed ? "completed" : "Pending"
                     }
-                    <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button><button id="undoBtn" class="button">Undo</button> </td>
+                    <td class="actions"> <button class="delete button">Delete</button><button class="done button">Done</button><button class="undoBtn button">Undo</button> </td>
                 </tr>`;
       })
       .join("");
@@ -67,7 +67,7 @@ function addTask(task) {
                 <td>23</td>
                 <td class="status">${
                   task.completed ? "completed" : "Pending"}</td>
-                <td class="actions"> <button class="delete button">Delete</button> <button class="done button">Done</button></td>
+                <td class="actions"> <button class="delete button">Delete</button> <button class="done button">Done</button><button class="undoBtn button">Undo</button></td>
             </tr>`;
   tasks.innerHTML += newTask;
 }
@@ -86,7 +86,15 @@ tasks.onclick = (event) => {
     let tasktodo = children[1];
     children[3].textContent = "completed";
     tasktodo.classList.add("Done");
-    autosave();
+  }
+
+  if(element.classList.contains('undoBtn')){
+    let parent = element.parentElement.parentElement;
+    let children = parent.children;
+    let tasktodo = children[1];
+    children[3].textContent = "Pending";
+    if(tasktodo.classList.contains("Done"))
+      tasktodo.classList.remove('Done');
   }
 };
 
