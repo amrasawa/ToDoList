@@ -14,7 +14,7 @@ async function addToDos() {
     let response = await fetch("https://dummyjson.com/todos");
     let data = await response.json();
     //console.log(data.todos);
-    numberOfTasks = data.length;
+    numberOfTasks = data.todos.length;
     let result = data.todos
       .map((task) => {
         autosave(task);
@@ -76,8 +76,10 @@ function addTask(task) {
 tasks.onclick = (event) => {
   let element = event.target;
   if (element.classList.contains("delete")) {
+    let task=element.parentElement.parentElement.children[1].textContent;
+    deleteTask(task);
+    loadHistory();
     numberOfTasks--;
-    element.parentElement.parentElement.remove();
     tasksNumber();
   }
 
@@ -134,6 +136,14 @@ search.oninput = async (event) => {
     tasks.innerHTML = result;
   } else addToDos();
 };
+
+function deleteTask(task){
+  let data=JSON.parse(localStorage.getItem('data'));
+  let newData=data.filter(ele=>{
+    return ele.todo!==task;
+  })
+  localStorage.setItem('data', JSON.stringify(newData));
+}
 
 function autosave(task) {
   let data = JSON.parse(localStorage.getItem("data") || "[]");
