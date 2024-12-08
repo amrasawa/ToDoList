@@ -13,7 +13,6 @@ async function addToDos() {
     numberOfTasks = 0;
     let response = await fetch("https://dummyjson.com/todos");
     let data = await response.json();
-    //console.log(data.todos);
     numberOfTasks = data.todos.length;
     let result = data.todos
       .map((task) => {
@@ -33,7 +32,7 @@ async function addToDos() {
     taskId = numberOfTasks;
     localStorage.setItem("id", taskId);
     tasks.innerHTML += result;
-    tasksNumber();
+    setNoTasks();
   }
 }
 
@@ -55,7 +54,7 @@ addTaskBtn.onclick = async (event) => {
     ++numberOfTasks;
     taskText.value = "";
     autosave(task);
-    tasksNumber();
+    setNoTasks();
   }
 };
 
@@ -76,11 +75,11 @@ function addTask(task) {
 tasks.onclick = (event) => {
   let element = event.target;
   if (element.classList.contains("delete")) {
-    let task=element.parentElement.parentElement.children[1].textContent;
+    let task = element.parentElement.parentElement.children[1].textContent;
     deleteTask(task);
     loadHistory();
     numberOfTasks--;
-    tasksNumber();
+    setNoTasks();
   }
 
   if (element.classList.contains("done")) {
@@ -100,7 +99,8 @@ tasks.onclick = (event) => {
   }
 };
 
-function tasksNumber() {
+function setNoTasks() {
+  localStorage.setItem("no", numberOfTasks);
   let tasksno = document.querySelector("footer span");
   tasksno.textContent = localStorage.getItem("no");
 }
@@ -137,21 +137,22 @@ search.oninput = async (event) => {
   } else addToDos();
 };
 
-function deleteTask(task){
-  let data=JSON.parse(localStorage.getItem('data'));
-  let newData=data.filter(ele=>{
-    return ele.todo!==task;
-  })
-  localStorage.setItem('data', JSON.stringify(newData));
+function deleteTask(task) {
+  let data = JSON.parse(localStorage.getItem("data"));
+  let newData = data.filter((ele) => {
+    return ele.todo !== task;
+  });
+  localStorage.setItem("data", JSON.stringify(newData));
 }
 
 function autosave(task) {
   let data = JSON.parse(localStorage.getItem("data") || "[]");
   data.push(task);
   localStorage.setItem("data", JSON.stringify(data));
-  localStorage.setItem("no", numberOfTasks);
   localStorage.setItem("id", taskId);
 }
+
+
 
 function loadHistory() {
   let data = JSON.parse(localStorage.getItem("data"), "[]");
@@ -170,5 +171,5 @@ function loadHistory() {
     })
     .join("");
   tasks.innerHTML = response;
-  tasksNumber();
+  setNoTasks();
 }
